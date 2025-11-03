@@ -317,7 +317,9 @@ All tables will have comprehensive RLS policies ensuring:
 - Date calculation utilities
 - LocalStorage for timezone preferences
 - Responsive design for mobile
-
+---
+**Note: For MVP, skip this and note as Phase 6 enhancement.**
+---
 ### Phase 7: Blog & Storytelling (Weeks 9-10)
 
 **Features:**
