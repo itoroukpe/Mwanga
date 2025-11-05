@@ -1,6 +1,4 @@
-` action to help them access the backend settings.
 
-Let me check if there are any existing secrets or configuration related to Google OAuth." duration="4.516428">
 
 The error you're seeing indicates that **Google OAuth is not yet enabled in your Lovable Cloud backend**. The code implementation is correct, but the backend configuration is missing.
 
