@@ -566,3 +566,4 @@ This approach provides enterprise-grade infrastructure while staying within budg
 3. STRIPE - Payment
 4. FedEX - Shipping
 5. VAPI - Reception Agent
+6. Print-on-Demand
