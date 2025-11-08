@@ -562,8 +562,7 @@ This approach provides enterprise-grade infrastructure while staying within budg
 ---
 ###API Required
 1. #Resend Email
-API Key for Resend Email
-
-2. Twilio
-3. STRIPE
-4. FedEX
+2. Twilio - Phone Messaging
+3. STRIPE - Payment
+4. FedEX - Shipping
+5. VAPI - Reception Agent
