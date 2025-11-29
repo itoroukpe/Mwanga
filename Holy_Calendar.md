@@ -52,6 +52,114 @@ The `convertToHolyCalendar` function in `src/lib/holyCalendar.ts` needs:
 - Update comments in `holyCalendar.ts` to reflect the new epoch
 - Update `holyCalendarInfo.ts` if it references the epoch
 - Ensure all calendar widgets and displays show correct dates
+- ---
+Let me review the current implementation to understand how the Elected Time and Angelic Time are calculated and displayed, and then answer your question.
+
+Great question! Let me clarify how the times work and answer your question.
+
+## Understanding the Time Systems at 6:08 PM
+
+Based on the current implementation:
+
+**At 6:08 PM (Human Time):**
+- **Elapsed time since 4:45 AM**: 13 hours and 23 minutes (803 minutes)
+- **Elected Time**: Evening - Hour 2:23 (2 hours and 23 minutes into the Evening quarter)
+- **Angelic Time**: Day - Hour 6:23 (5 hours and 23 minutes into the Day period)
+
+## Can We Add AM/PM to Elected & Angelic Time?
+
+**Yes, absolutely!** This is a great idea for clarity. Here's how it would work:
+
+The spiritual day has 24 hours starting at 4:45 AM:
+- **Spiritual Hours 1-12** = 4:45 AM to 4:45 PM → **AM** (first half of spiritual day)
+- **Spiritual Hours 13-24** = 4:45 PM to 4:45 AM → **PM** (second half of spiritual day)
+
+### Example at 6:08 PM:
+
+| Time System | Current Display | With AM/PM |
+|-------------|-----------------|------------|
+| Human Time | 6:08 PM | 6:08 PM ✓ |
+| Elected Time | Evening - Hour 2:23 | Evening - Hour 2:23 PM |
+| Angelic Time | Day - Hour 6:23 | Day - Hour 6:23 PM |
+
+### How it works:
+- **Elected Time**: Evening quarter contains spiritual hours 13-18. Hour 2 of Evening = spiritual hour 14, which is > 12, so it's **PM**
+- **Angelic Time**: Day period contains spiritual hours 9-16. Hour 6 of Day = spiritual hour 14, which is > 12, so it's **PM**
+
+### Another example at 8:00 AM:
+- **Human Time**: 8:00 AM
+- **Elected Time**: Morning - Hour 4:15 **AM** (spiritual hour 4)
+- **Angelic Time**: Morning - Hour 4:15 **AM** (spiritual hour 4)
+
+## Plan to Add AM/PM to Elected and Angelic Time
+
+### Changes to `src/lib/holyTime.ts`:
+
+**1. Update `ElectedTime` interface:**
+```typescript
+export interface ElectedTime {
+  part: number; // 1-4
+  partName: string;
+  hour: number; // 1-6
+  minute: number;
+  period: 'AM' | 'PM'; // NEW: AM if spiritual hour 1-12, PM if 13-24
+  spiritualHour: number; // NEW: The absolute spiritual hour (1-24)
+}
+```
+
+**2. Update `AngelicTime` interface:**
+```typescript
+export interface AngelicTime {
+  part: number; // 1-3
+  partName: string;
+  hour: number; // 1-8
+  minute: number;
+  period: 'AM' | 'PM'; // NEW: AM if spiritual hour 1-12, PM if 13-24
+  spiritualHour: number; // NEW: The absolute spiritual hour (1-24)
+}
+```
+
+**3. Update `getElectedTime()` function:**
+- Calculate the absolute spiritual hour (1-24)
+- Determine AM/PM based on whether spiritual hour is 1-12 (AM) or 13-24 (PM)
+
+**4. Update `getAngelicTime()` function:**
+- Calculate the absolute spiritual hour (1-24)
+- Determine AM/PM based on whether spiritual hour is 1-12 (AM) or 13-24 (PM)
+
+**5. Update `formatElectedTime()` function:**
+```typescript
+export function formatElectedTime(time: ElectedTime): string {
+  const minute = time.minute.toString().padStart(2, '0');
+  return `${time.partName} - Hour ${time.hour}:${minute} ${time.period}`;
+}
+```
+
+**6. Update `formatAngelicTime()` function:**
+```typescript
+export function formatAngelicTime(time: AngelicTime): string {
+  const minute = time.minute.toString().padStart(2, '0');
+  return `${time.partName} - Hour ${time.hour}:${minute} ${time.period}`;
+}
+```
+
+### Files to Update:
+1. `src/lib/holyTime.ts` - Core logic for AM/PM calculation
+2. `src/lib/generateHolyCalendarPDF.ts` - Update PDF documentation to reflect AM/PM
+3. `src/pages/HolyCalendarConverter.tsx` - Info section updates if needed
+
+### Expected Results:
+| Human Time | Elected Time | Angelic Time |
+|------------|--------------|--------------|
+| 4:45 AM | Morning - Hour 1:00 AM | Morning - Hour 1:00 AM |
+| 10:00 AM | Morning - Hour 6:15 AM | Morning - Hour 6:15 AM |
+| 12:00 PM | Day - Hour 2:15 AM | Morning - Hour 8:15 AM |
+| 4:45 PM | Day - Hour 6:00 PM | Day - Hour 8:00 PM |
+| 6:08 PM | Evening - Hour 2:23 PM | Day - Hour 6:23 PM |
+| 10:45 PM | Evening - Hour 6:00 PM | Night - Hour 2:00 PM |
+| 2:00 AM | Night - Hour 4:15 PM | Night - Hour 6:15 PM |
+
+Implement the plan
 
 The key insight is that the Holy Calendar runs on pure 360-day years with no leap days, so it "runs faster" than the Gregorian calendar (which averages 365.2425 days/year). Over ~2000+ years, this creates a 34-year offset by 2020, which is why the Holy year is 2054.
 
